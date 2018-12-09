@@ -19,3 +19,14 @@ let apiMap = L.map(`map`, {
 L.control.zoom({
   position: 'bottomleft'
 }).addTo(apiMap);
+
+
+let underlay = {};
+underlay["Google Maps &nbsp;&nbsp;"] = fBasemap;
+
+let overlay = {};
+//overlay["Drawing layer &nbsp;&nbsp;"] = this.layers[0];
+
+let mapControls = L.control.layers(underlay, overlay, {
+  position: "bottomright"
+}).addTo(apiMap);
