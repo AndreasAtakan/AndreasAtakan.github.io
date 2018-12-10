@@ -1,32 +1,14 @@
-console.info("Running in production mode");
+"use strict";
 
+import {initMap} from "./map/initMap.js";
 
-let fBasemap = L.tileLayer("http://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}",
-                          {
-                            id: "0",
-                            attribution: "&copy; <a href=\"https://www.google.com/\" target=\"_blank\">Google Maps</a> contributors"
-                          });
+function() {
+  console.info("Running in production mode");
 
+  window.map = null;
+  window.mapControl = null;
+  window.basemaps = new Array();
+  window.layers = new Array();
 
-
-let apiMap = L.map(`map`, {
-  center: [25, -25],
-  zoomControl: false,
-  zoom: 3,
-  layers: [fBasemap]
-});
-
-L.control.zoom({
-  position: 'bottomleft'
-}).addTo(apiMap);
-
-
-let underlay = {};
-underlay["Google Maps &nbsp;&nbsp;"] = fBasemap;
-
-let overlay = {};
-//overlay["Drawing layer &nbsp;&nbsp;"] = this.layers[0];
-
-let mapControls = L.control.layers(underlay, overlay, {
-  position: "bottomright"
-}).addTo(apiMap);
+  initMap(20, -25);
+}();
