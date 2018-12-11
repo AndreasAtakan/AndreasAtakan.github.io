@@ -40,18 +40,27 @@ export function gfx(container, instanceNum, initLat, initLng) {
 
 
  /**
-  * Binds the class methods to all necessary HTML elements as event listeners.
+  * Binds the class methods to all necessary HTML geojsonSourceelements as event listeners.
   */
   this.init = function() {
 
     // Binding 'Add' button in 'Add layer' modal
     $("div#addLayerModal button#addLayer").click((e) => {
       let title = $("div#addLayerModal input#layerTitle").val();
-      let data = {};
-      console.log(title);
+      let dataFile = $("input#geojsonSource")[0].files[0];
       //let type = $("div#addLayerModal a[aria-expanded=\"true\"]").attr("data-layerType");
 
-      this.addLayer(title, data);
+      if(dataFile.name.match(/\.(geojson|json)$/gi)) {
+        let fr = new FileReader();
+        fr.onload = (ev) => {
+          console.log(title);
+          console.log(ev.target.result);
+
+          this.addLayer(title, ev.target.result);
+        }
+        fr.readAsDataURL(dataFile);
+      }else
+        alert("Filetype does not match .geojson or .json");
 
       $("div#addLayerModal input#layerTitle").val("");
 
@@ -178,3 +187,22 @@ export function gfx(container, instanceNum, initLat, initLng) {
 
 let maingfx = new gfx($(`div#container`), 0, 63, 12);
 maingfx.init();
+
+
+
+
+/*
+  Generating layer manually for testing perpoces
+*/
+maingfx.addLayer("testing", {
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "amenity": "Baseball Stadium",
+        "popupContent": "This is where the Rockies play!"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.99404, 39.75621]
+    }
+});

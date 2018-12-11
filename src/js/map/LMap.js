@@ -98,6 +98,7 @@ export function LMap(instanceNum, initLat, initLng) {
 
     let attributionStr = `<span id=\"${hash}\">${title}</span>
                           &nbsp;&nbsp;
+                          &nbsp;&nbsp;
                           <a class=\"px-2 fa-lg\"><i class=\"fa fa-trash\" id=\"layerDelete\" data-layerId=\"${hash}\"></i></a>
                           <!--a class=\"px-2 fa-lg\"><i class=\"fa fa-edit\" id=\"layerEdit\" data-layerId=\"${hash}\"></i></a-->`;
 

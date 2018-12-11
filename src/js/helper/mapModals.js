@@ -28,10 +28,14 @@ export let addLayerModal = `
                   <label for=\"layerTitle\">Layer title</label>
                 </div>
 
+                <br>
+
                 <!-- geoJSON-source -->
                 <div class=\"md-form\">
-                  <input type=\"file\" id=\"geoJSONSource\" class=\"form-control\">
-                  <label for=\"geoJSONSource\">geoJSON-source</label>
+                  <p><b>geoJSON source-file:</b></p>
+                  <div class="btn btn-primary btn-sm">
+                    <input type="file" id="geojsonSource">
+                  </div>
                 </div>
 
                 <!-- Add button -->
