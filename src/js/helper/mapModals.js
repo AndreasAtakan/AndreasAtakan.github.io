@@ -51,8 +51,8 @@ export let addLayerModal = `
                       <div class=\"card-body\">
 
                         <div class=\"md-form\">
-                          <div class="btn btn-primary btn-sm">
-                            <input type="file" id="geojsonSource">
+                          <div class=\"btn btn-primary btn-sm\">
+                            <input type=\"file\" id=\"geojsonSource\">
                           </div>
                         </div>
 
