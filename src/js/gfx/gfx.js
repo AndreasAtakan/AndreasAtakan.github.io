@@ -1,8 +1,8 @@
 "use strict";
 
-import {EpochTime} from "./helper/EpochTime.js";
-import {LMap} from "./map/LMap.js";
-import {addLayerModal} from "./helper/mapModals.js";
+import {EpochTime} from "../helper/EpochTime.js";
+import {LMap} from "../map/LMap.js";
+import {addLayerModal} from "../helper/mapModals.js";
 
 
 /**
@@ -10,12 +10,11 @@ import {addLayerModal} from "./helper/mapModals.js";
  *
  * @param {DOM-element} container The container
  * @param {number} instanseNum The index of the map to generated. This is to distinguish between the maps in the page
+ * @param {number} zoom The zoom level the map is to be initialized to
  * @param {number} initLat The latitude value the map is to be initialized to
  * @param {number} initLng The longitude value the map is to be initialized to
  */
-export function gfx(container, instanceNum, initLat, initLng) {
-  console.info("Running in test mode");
-
+export function gfx(container, instanceNum, zoom, initLat, initLng) {
 
   // Initializing container content
   let cont = ``;
@@ -34,38 +33,46 @@ export function gfx(container, instanceNum, initLat, initLng) {
 
 
   // Generating Leaflet map
-  this.map = new LMap(instanceNum, initLat, initLng);
+  this.map = new LMap(instanceNum, zoom, initLat, initLng);
 
 
 
 
  /**
-  * Binds the class methods to all necessary HTML geojsonSourceelements as event listeners.
+  * Binds the object methods to all necessary HTML geojsonSourceelements as event listeners.
   */
-  this.init = function() {
+  this.init = () => {
 
     // Binding 'Add' button in 'Add layer' modal
     $("div#addLayerModal button#addLayer").click((e) => {
+      let type = $("div#addLayerModal a[aria-expanded=\"true\"]").attr("data-layerType");
       let title = $("div#addLayerModal input#layerTitle").val();
-      let dataFile = $("input#geojsonSource")[0].files[0];
-      //let type = $("div#addLayerModal a[aria-expanded=\"true\"]").attr("data-layerType");
+      let callObj = {
+        style: (feature) => {return feature.properties.color;}
+      };
 
-      if(dataFile.name.match(/\.(geojson|json)$/gi)) {
-        let fr = new FileReader();
-        fr.onload = (ev) => {
-          console.log(title);
-          console.log(ev.target.result);
+      switch (type) {
+        case "file":
+          let dataFile = $("input#geojsonSource")[0].files[0];
 
-          this.addLayer(title, ev.target.result);
-        }
-        fr.readAsDataURL(dataFile);
-      }else
-        alert("Filetype does not match .geojson or .json");
+          this.addLayerFrom(type, title, callObj, (layer) => {
+            return layer.feature.properties.description;
+          }, dataFile);
 
-      $("div#addLayerModal input#layerTitle").val("");
+          break;
 
-      // Binds the layer edit/delete buttons
-      this.resetControlsEvents();
+        case "url":
+          let url = "http://" + $("div#addLayerModal input#geojsonURL").val();
+
+          this.addLayerFrom(type, title, callObj, (layer) => {
+            return layer.feature.properties.Belysning;
+          }, url);
+
+          break;
+
+        default:
+          console.error("LAYER-TYPE ERROR: Layer type not defined");
+      }
     });
 
   };
@@ -74,9 +81,57 @@ export function gfx(container, instanceNum, initLat, initLng) {
 
 
  /**
+  * Method for adding layer based on data-source type
+  *
+  * @param {string} type The layer type
+  * @param {string} title The layer title
+  * @param {callback} callObj The object containing all callback to be performed on the data
+  * @param {callback} popupCall The callback that generates the popup content
+  */
+  this.addLayerFrom = (type, title, callObj, popupCall, ...rest) => {
+    switch (type) {
+      case "file":
+        let dataFile = rest[0];
+        if(dataFile.name.match(/\.(geojson|json)$/gi)) {
+          let fr = new FileReader();
+          fr.onload = (ev) => {
+            console.log(ev.target.result);
+
+            this.addLayer(title, ev.target.result, callObj, popupCall);
+
+            $("div#addLayerModal input#layerTitle").val("");
+          }
+          fr.readAsDataURL(dataFile);
+        }else
+          alert("Filetype does not match .geojson or .json");
+        break;
+
+      case "url":
+        let url = rest[0];
+
+        $.getJSON(url, (data, status) => {
+          if(status == "success") {
+            this.addLayer(title, data, callObj, popupCall);
+
+            $("div#addLayerModal input#layerTitle").val("");
+            $("div#addLayerModal input#geojsonURL").val("");
+          }else
+            alert("Error: could not reach url");
+        });
+        break;
+
+      default:
+        console.error("LAYER-TYPE ERROR: Layer type not defined");
+    }
+  };
+
+
+
+
+ /**
   * Method for reseting all events on the basemap's edit/delete buttons
   */
-  this.resetControlsEvents = function() {
+  this.resetControlsEvents = () => {
     // NOTE: This function call is probably not the best way of solving the
     //       `click-events-cleared-on-layer-changes` problem.
     //       In true Javascript fashion; if it works, don't question it.
@@ -94,16 +149,21 @@ export function gfx(container, instanceNum, initLat, initLng) {
   *
   * @param {string} title The name of the layer to be added
   * @param {geoJSON} data The geoJSON data to generate the layer from
+  * @param {callback} callObj The object containing all callback to be performed on the data
+  * @param {callback} popupCall The callback that generates the popup content
   */
-  this.addLayer = function(title, data) {
+  this.addLayer = (title, data, callObj, popupCall) => {
     let hash = EpochTime();
     this.layerIds.push(hash);
 
     try {
-      this.map.addLayer(hash, title, data);
+      this.map.addLayer(hash, title, data, callObj, popupCall);
     }catch(err) {
       console.error(err);
     }
+
+    // Binds the layer edit/delete buttons
+    this.resetControlsEvents();
   };
 
 
@@ -114,7 +174,7 @@ export function gfx(container, instanceNum, initLat, initLng) {
   *
   * @return {object} The layer with id equal to 'hash'
   */
-  this.getLayer = function(hash) {
+  this.getLayer = (hash) => {
     return this.map.getLayer(hash);
   };
 
@@ -123,7 +183,7 @@ export function gfx(container, instanceNum, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer to be removed
   */
-  this.removeLayer = function(hash) {
+  this.removeLayer = (hash) => {
     this.map.removeLayer(hash);
     for(let x = 0; x < this.layerIds.length; x++) {
       if(this.layerIds[x] == hash) {
@@ -138,7 +198,7 @@ export function gfx(container, instanceNum, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer that the button is to be bound to
   */
-  this.bindLayerButtons = function(hash) {
+  this.bindLayerButtons = (hash) => {
     let editBtn = `i#layerEdit[data-layerId=\"${hash}\"]`,
         deleteBtn = `i#layerDelete[data-layerId=\"${hash}\"]`;
 
@@ -171,38 +231,3 @@ export function gfx(container, instanceNum, initLat, initLng) {
     });
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-let maingfx = new gfx($(`div#container`), 0, 63, 12);
-maingfx.init();
-
-
-
-
-/*
-  Generating layer manually for testing perpoces
-*/
-maingfx.addLayer("testing", {
-    "type": "Feature",
-    "properties": {
-        "name": "Coors Field",
-        "amenity": "Baseball Stadium",
-        "popupContent": "This is where the Rockies play!"
-    },
-    "geometry": {
-        "type": "Point",
-        "coordinates": [-104.99404, 39.75621]
-    }
-});

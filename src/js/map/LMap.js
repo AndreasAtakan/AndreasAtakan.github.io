@@ -7,10 +7,11 @@ import {EpochTime} from "../helper/EpochTime.js";
  * Initializing function for api map
  *
  * @param {number} instanseNum The index of the map-container to be used
+ * @param {number} zoom The zoom level the map is to be initialized to
  * @param {number} initLat The latitude value the map is to be initialized to
  * @param {number} initLng The longitude value the map is to be initialized to
  */
-export function LMap(instanceNum, initLat, initLng) {
+export function LMap(instanceNum, zoom, initLat, initLng) {
   this.id = EpochTime();
   this.instanceNum = instanceNum;
   this.initLat = initLat;
@@ -33,7 +34,7 @@ export function LMap(instanceNum, initLat, initLng) {
   this.apimap = L.map(`map${instanceNum}`, {
     center: [this.initLat, this.initLng],
     zoomControl: false,
-    zoom: 5,
+    zoom: zoom,
     layers: [this.basemaps[0]]
   });
   L.control.zoom({
@@ -83,12 +84,14 @@ export function LMap(instanceNum, initLat, initLng) {
   * @param {string} hash The unique hash of the layer to be returned
   * @param {string} title The name of the layer to be added
   * @param {geoJSON} data The geoJSON data to generate the layer from
+  * @param {callback} callObj The object containing all callback to be performed on the data
+  * @param {callback} popupCall The callback that generates the popup content
   *
   * @throws An error if the layer type is not defined
   */
-  this.addLayer = function(hash, title, data) {
+  this.addLayer = (hash, title, data, callObj, popupCall) => {
 
-    let layer = L.geoJSON(data).addTo(this.apimap);
+    let layer = L.geoJSON(data, callObj).bindPopup(popupCall).addTo(this.apimap);
 
     layer.options.id = hash;
     layer.options.type = "geojson";
@@ -96,13 +99,13 @@ export function LMap(instanceNum, initLat, initLng) {
 
     this.layers.push(layer);
 
-    let attributionStr = `<span id=\"${hash}\">${title}</span>
-                          &nbsp;&nbsp;
-                          &nbsp;&nbsp;
-                          <a class=\"px-2 fa-lg\"><i class=\"fa fa-trash\" id=\"layerDelete\" data-layerId=\"${hash}\"></i></a>
-                          <!--a class=\"px-2 fa-lg\"><i class=\"fa fa-edit\" id=\"layerEdit\" data-layerId=\"${hash}\"></i></a-->`;
+    let attribStr = `<span id=\"${hash}\">${title}</span>
+                     &nbsp;&nbsp;
+                     &nbsp;&nbsp;
+                     <a class=\"px-2 fa-lg\"><i class=\"fa fa-trash\" id=\"layerDelete\" data-layerId=\"${hash}\"></i></a>
+                     <!--a class=\"px-2 fa-lg\"><i class=\"fa fa-edit\" id=\"layerEdit\" data-layerId=\"${hash}\"></i></a-->`;
 
-    this.mapControl.addOverlay(layer, attributionStr);
+    this.mapControl.addOverlay(layer, attribStr);
   };
 
 
@@ -113,7 +116,7 @@ export function LMap(instanceNum, initLat, initLng) {
   *
   * @return {object} The layer with id equal to 'hash'
   */
-  this.getLayer = function(hash) {
+  this.getLayer = (hash) => {
     for(let x = 0; x < this.layers.length; x++)
       if(this.layers[x].options.id == hash)
         return this.layers[x];
@@ -128,7 +131,7 @@ export function LMap(instanceNum, initLat, initLng) {
   *
   * @return {number} The position of the layer
   */
-  this.getLayerPos = function(hash) {
+  this.getLayerPos = (hash) => {
     for(let x = 0; x < this.layers.length; x++)
       if(this.layers[x].options.id == hash)
         return x;
@@ -139,7 +142,7 @@ export function LMap(instanceNum, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer to be removed
   */
-  this.removeLayer = function(hash) {
+  this.removeLayer = (hash) => {
     let x = this.getLayerPos(hash);
 
     this.apimap.removeLayer(this.layers[x]);
@@ -152,7 +155,7 @@ export function LMap(instanceNum, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer to be activated
   */
-  this.activateLayer = function(hash) {
+  this.activateLayer = (hash) => {
     this.apimap.addLayer(this.getLayer(hash));
   };
 }
