@@ -95,13 +95,13 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
         if(dataFile.name.match(/\.(geojson|json)$/gi)) {
           let fr = new FileReader();
           fr.onload = (ev) => {
-            console.log(ev.target.result);
+            let json = JSON.parse(ev.target.result);
 
-            this.addLayer(title, ev.target.result, callObj, popupCall);
+            this.addLayer(title, json, callObj, popupCall);
 
             $("div#addLayerModal input#layerTitle").val("");
           }
-          fr.readAsDataURL(dataFile);
+          fr.readAsText(dataFile);
         }else
           alert("Filetype does not match .geojson or .json");
         break;
