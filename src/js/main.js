@@ -25,7 +25,7 @@ maingfx.addLayerFrom("url", "Snarveier", {}, (layer) => {
         Synlighet: ${layer.feature.properties.Synlighet} <br>
         Creator: ${layer.feature.properties.Creator}
       </p>`;
-},"http://data-tromso.opendata.arcgis.com/datasets/b792b1e7b627463aba410ecc0bf21e3e_0.geojson");
+},"https://data-tromso.opendata.arcgis.com/datasets/b792b1e7b627463aba410ecc0bf21e3e_0.geojson");
 
 
 
@@ -39,7 +39,7 @@ maingfx.addLayerFrom("url", "Utfartsparkering", {}, (layer) => {
       <p>
         Kommentar: ${layer.feature.properties.Kommentar}
       </p>`;
-},"http://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_6.geojson");
+},"https://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_6.geojson");
 
 
 
@@ -53,7 +53,7 @@ maingfx.addLayerFrom("url", "Skiløyper", {}, (layer) => {
       <p>
         Type: ${layer.feature.properties.TYPE_}
       </p>`;
-},"http://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_7.geojson");
+},"https://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_7.geojson");
 
 
 
@@ -68,7 +68,7 @@ maingfx.addLayerFrom("url", "Skoler", {}, (layer) => {
         Byggningstype: ${layer.feature.properties.OBJTYPE} <br>
         Type: ${layer.feature.properties.SKOLETYPE}
       </p>`;
-},"http://data-tromso.opendata.arcgis.com/datasets/4fbe853b302d4a77b077e4c92082dd7f_1.geojson");
+},"https://data-tromso.opendata.arcgis.com/datasets/4fbe853b302d4a77b077e4c92082dd7f_1.geojson");
 
 
 
@@ -84,4 +84,4 @@ maingfx.addLayerFrom("url", "Barnehager ", {}, (layer) => {
         Type: ${layer.feature.properties.TYPE} <br>
         <a href=\"${layer.feature.properties.URL}\" target=\"_blank\">Nettsted</a>
       </p>`;
-},"http://data-tromso.opendata.arcgis.com/datasets/2613ce0bcac44ec0a41707af449008a2_0.geojson");
+},"https://data-tromso.opendata.arcgis.com/datasets/2613ce0bcac44ec0a41707af449008a2_0.geojson");
