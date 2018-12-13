@@ -62,7 +62,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
           break;
 
         case "url":
-          let url = "http://" + $("div#addLayerModal input#geojsonURL").val();
+          let url = "https://" + $("div#addLayerModal input#geojsonURL").val();
 
           this.addLayerFrom(type, title, callObj, (layer) => {
             return layer.feature.properties.Belysning;
