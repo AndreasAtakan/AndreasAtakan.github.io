@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>CKAN map solution</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <!-- Leaflet CDN imports -->
+  <link rel="stylesheet" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css">
+  <script integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin="" src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+
+  <!-- custom leaflet button local import -->
+  <script type="text/javascript" src="./lib/LeafletEasyButton/leaflet.easy.button.js"></script>
+  <link rel="stylesheet" href="./lib/LeafletEasyButton/leaflet.easy.button.css">
+
+  <!-- ESRI-Geocoder leaflet plugin CDN imports -->
+  <script integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g==" crossorigin="" src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"></script>
+  <link rel="stylesheet" integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ==" crossorigin="" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css">
+  <script integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A==" crossorigin="" src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js"></script>
+
+
+
+  <!-- Font-Awesome CDN imports -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- Bootstrap CSS CDN import -->
+  <link rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+
+  <!-- Material Design Bootstrap CSS CDN import -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.7/css/mdb.min.css">
+
+  <!-- Own defined CSS local import -->
+  <link rel="stylesheet" href="./src/css/main.css">
+</head>
+<body>
+
+  <main class="m-0 p-0">
+    <div class="container-fluid m-0 p-0" id="container"></div>
+  </main>
+
+  <!-- jQuery - Popper.js - Bootstrap JS - Material Design Bootstrap JS CDN imports -->
+  <!-- in that order -->
+  <script integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.7/js/mdb.min.js"></script>
+  <!--script src="./src/js/main.js" type="module"></script-->
+	<script type="text/javascript" src="./src/js/bundle.js"></script>
+  <script>
+		console.info("Running in test mode");
+
+		let maingfx = new gfx($(`div#container`), 0, 10, 69.6489, 18.95508);
+		maingfx.init();
+
+
+
+
+
+
+
+	// Generating layer manually for testing purpose
+
+
+		// Snarveier i Tromsø kommune
+		maingfx.addLayerFrom("url", "Snarveier", {}, (layer) => {
+			return `
+					<h5>${layer.feature.properties.Dekke}</h5>
+					<p>
+						Belysning: ${layer.feature.properties.Belysning} <br>
+						Synlighet: ${layer.feature.properties.Synlighet} <br>
+						Creator: ${layer.feature.properties.Creator}
+					</p>`;
+		},"http://data-tromso.opendata.arcgis.com/datasets/b792b1e7b627463aba410ecc0bf21e3e_0.geojson");
+
+
+
+
+
+
+		// Utfartsparkering i Tromsø kommune
+		maingfx.addLayerFrom("url", "Utfartsparkering", {}, (layer) => {
+			return `
+					<h5>${layer.feature.properties.Navn}</h5>
+					<p>
+						Kommentar: ${layer.feature.properties.Kommentar}
+					</p>`;
+		},"http://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_6.geojson");
+
+
+
+
+
+
+		// Skiløyper i Tromsø kommune
+		maingfx.addLayerFrom("url", "Skiløyper", {}, (layer) => {
+			return `
+					<h5>${layer.feature.properties.NAVN}</h5>
+					<p>
+						Type: ${layer.feature.properties.TYPE_}
+					</p>`;
+		},"http://data-tromso.opendata.arcgis.com/datasets/3d9b877e2b3e4718943fe7484ed7d6d0_7.geojson");
+
+
+
+
+
+
+		// Skoler i Tromsø kommune
+		maingfx.addLayerFrom("url", "Skoler", {}, (layer) => {
+			return `
+					<h5>${layer.feature.properties.SKOLENAVN}</h5>
+					<p>
+						Byggningstype: ${layer.feature.properties.OBJTYPE} <br>
+						Type: ${layer.feature.properties.SKOLETYPE}
+					</p>`;
+		},"http://data-tromso.opendata.arcgis.com/datasets/4fbe853b302d4a77b077e4c92082dd7f_1.geojson");
+
+
+
+
+
+
+		// Barnehager  i Tromsø kommune
+		maingfx.addLayerFrom("url", "Barnehager ", {}, (layer) => {
+			return `
+					<h5>${layer.feature.properties.NAVN}</h5>
+					<p>
+						Byggningstype: ${layer.feature.properties.OBJTYPE} <br>
+						Type: ${layer.feature.properties.TYPE} <br>
+						<a href=\"${layer.feature.properties.URL}\" target=\"_blank\">Nettsted</a>
+					</p>`;
+		},"http://data-tromso.opendata.arcgis.com/datasets/2613ce0bcac44ec0a41707af449008a2_0.geojson");
+  </script>
+</body>
+</html>

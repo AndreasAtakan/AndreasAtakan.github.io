@@ -19,6 +19,11 @@
   <link rel="stylesheet" integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ==" crossorigin="" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css">
   <script integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A==" crossorigin="" src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js"></script>
 
+	<!-- Leaflet markercluster plugin CDN import -->
+	<script type="text/javascript" crossorigin="" src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+	<link rel="stylesheet" crossorigin="" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+	<link rel="stylesheet" crossorigin="" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+
 
 
   <!-- Font-Awesome CDN imports -->
@@ -45,9 +50,25 @@
   <script integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.7/js/mdb.min.js"></script>
-  <script src="./src/js/main.js" type="module"></script>
+  <!--script src="./src/js/main.js" type="module"></script-->
+	<script type="text/javascript" src="./src/js/bundle.js"></script>
   <script>
-    /**/
+		console.info("Running in test mode");
+
+		let maingfx = new gfx($(`div#container`), 0, 5, 64, 13);
+
+
+		// Generating layer manually for testing purpose
+		maingfx.addLayer("Medlemmer", geojson, {
+			onEachFeature: function (feature, layer) {
+				layer.bindPopup(`<h5>${layer.feature.properties.Navn}</h5>
+											 	<p>
+													Innbyggertall: ${layer.feature.properties.Innbyggertall} <br>
+													Område: ${layer.feature.properties["Område"]} <br>
+													<a href=\"${layer.feature.properties.Nettsted}\" target=\"_blank\">Nettsted</a>
+											 	</p>`);
+				}
+			});
   </script>
 </body>
 </html>

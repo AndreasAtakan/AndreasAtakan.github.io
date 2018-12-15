@@ -1,3 +1,5 @@
+"use strict";
+
 import {gfx} from "./gfx/gfx.js";
 
 console.info("Running in test mode");
