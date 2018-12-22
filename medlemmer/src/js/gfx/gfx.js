@@ -21,7 +21,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   container.html(cont);
 
 
-  // Initializing layer id lists
+  // Initializing basemap/layer id lists
   this.basemapIds = new Array();
   this.layerIds = new Array();
 
@@ -30,6 +30,66 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   this.map = new LMap(instanceNum, zoom, initLat, initLng);
 
 
+
+
+ /**
+  * Method for adding layer based on data-source type
+  *
+  * @param {string} title The layer title
+  * @param {string} url The url to fetch data from
+  * @param {callback} callObj The object containing all callback to be performed on the data
+  */
+  this.addLayerFromURL = (title, url, callObj) => {
+
+    $.getJSON(url, (data, status) => {
+      if(status == "success" && data.success) {
+
+        let geojson = {
+          "type": "FeatureCollection",
+          "features": []
+        };
+
+        L.esri.Geocoding.geocode().address(data.result[0].main_adddress).run((err, results, response) => {
+
+          let res = results.results[0];
+          //let urld = data.result[0];
+          for(var urld of data.result)
+            geojson["features"].push({
+              "type": "Feature",
+              "properties": {
+                "id": urld.id,
+                "type": urld.type,
+                "title": urld.title,
+                "name": urld.name,
+                "display_name": urld.display_name,
+                "description": urld.description,
+                "contact_email": urld.contact_email,
+                "contact_mobile": urld.contact_mobile,
+                "contact_name": urld.contact_name,
+                "contact_title": urld.contact_title,
+                "organization_number": urld.organization_number,
+                "organization_type": urld.organization_type,
+                "approval_status": urld.approval_status,
+                "state": urld.state,
+                "phone": urld.phone,
+                "segment": urld.segment,
+                "website": urld.website,
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [res.latlng.lat, res.latlng.lng]
+              }
+            });
+
+          console.log(geojson);
+
+          this.addLayer(title, geojson, callObj);
+        });
+
+      }else
+        alert("Error: could not reach url");
+    });
+  };
 
 
  /**
@@ -61,6 +121,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   this.getLayer = (hash) => {
     return this.map.getLayer(hash);
   };
+
 
  /**
   * Method for removing a layer

@@ -50,9 +50,10 @@
   <script integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.7/js/mdb.min.js"></script>
-  <!--script src="./src/js/main.js" type="module"></script-->
-	<script type="text/javascript" src="./src/js/bundle.js"></script>
+  <script src="./src/js/main.js" type="module"></script>
+	<!--script type="text/javascript" src="./src/js/bundle.js"></script-->
   <script>
+		/*
 		console.info("Running in test mode");
 
 		let maingfx = new gfx($(`div#container`), 0, 5, 64, 13);
@@ -67,8 +68,16 @@
 													Område: ${layer.feature.properties["Område"]} <br>
 													<a href=\"${layer.feature.properties.Nettsted}\" target=\"_blank\">Nettsted</a>
 											 	</p>`);
-				}
-			});
+			}
+		});
+
+		$.getJSON("http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true", (data, status) => {
+			if(status == "success") {
+				console.log(data);
+			}else
+				alert("Error: could not reach url");
+		});
+		*/
   </script>
 </body>
 </html>
