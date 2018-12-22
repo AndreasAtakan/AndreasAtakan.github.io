@@ -22,7 +22,6 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
 
 
   // Initializing basemap/layer id lists
-  this.basemapIds = new Array();
   this.layerIds = new Array();
 
 
@@ -37,54 +36,55 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   *
   * @param {string} title The layer title
   * @param {string} url The url to fetch data from
-  * @param {callback} callObj The object containing all callback to be performed on the data
   */
-  this.addLayerFromURL = (title, url, callObj) => {
+  this.addLayerFromURL = (title, url, popupCont) => {
 
     $.getJSON(url, (data, status) => {
       if(status == "success" && data.success) {
 
-        let geojson = {
-          "type": "FeatureCollection",
-          "features": []
-        };
+        let hash = this.addLayer(title);
 
-        L.esri.Geocoding.geocode().address(data.result[0].main_adddress).run((err, results, response) => {
-
-          let res = results.results[0];
-          //let urld = data.result[0];
-          for(var urld of data.result)
-            geojson["features"].push({
-              "type": "Feature",
-              "properties": {
-                "id": urld.id,
-                "type": urld.type,
-                "title": urld.title,
-                "name": urld.name,
-                "display_name": urld.display_name,
-                "description": urld.description,
-                "contact_email": urld.contact_email,
-                "contact_mobile": urld.contact_mobile,
-                "contact_name": urld.contact_name,
-                "contact_title": urld.contact_title,
-                "organization_number": urld.organization_number,
-                "organization_type": urld.organization_type,
-                "approval_status": urld.approval_status,
-                "state": urld.state,
-                "phone": urld.phone,
-                "segment": urld.segment,
-                "website": urld.website,
-              },
-              "geometry": {
-                "type": "Point",
-                "coordinates": [res.latlng.lat, res.latlng.lng]
-              }
-            });
-
-          console.log(geojson);
-
-          this.addLayer(title, geojson, callObj);
-        });
+        for(var urld of data.result) {
+          L.esri.Geocoding.geocode().address(urld.main_adddress).run((err, results, response) => {
+            let res = results.results[0];
+            this.addMarker(res.latlng.lat, res.latlng.lng,
+              `<h5>${urld.name}</h5>
+               <p>
+                type: ${urld.type} <br>
+                description: ${urld.description} <br>
+                <a href=\"${urld.website}\" target=\"_blank\">Nettsted</a>
+               </p>`,
+            hash);
+          });
+          /*
+          geojson["features"].push({
+            "type": "Feature",
+            "properties": {
+              "id": urld.id,
+              "type": urld.type,
+              "title": urld.title,
+              "name": urld.name,
+              "display_name": urld.display_name,
+              "description": urld.description,
+              "contact_email": urld.contact_email,
+              "contact_mobile": urld.contact_mobile,
+              "contact_name": urld.contact_name,
+              "contact_title": urld.contact_title,
+              "organization_number": urld.organization_number,
+              "organization_type": urld.organization_type,
+              "approval_status": urld.approval_status,
+              "state": urld.state,
+              "phone": urld.phone,
+              "segment": urld.segment,
+              "website": urld.website
+            },
+            "geometry": {
+              "type": "Point",
+              "coordinates": [latlng.lat, latlng.lng]
+            }
+          });
+          */
+        }
 
       }else
         alert("Error: could not reach url");
@@ -95,16 +95,32 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
  /**
   * Method for adding a layer to the api map
   *
-  * @param {string} title The name of the layer to be added
-  * @param {geoJSON} data The geoJSON data to generate the layer from
-  * @param {callback} callObj The object containing all callback to be performed on the data
+  * @param {string} hash The id of the layer to add the marker to
+  * @param {number} lat The latitude value of the marker
+  * @param {number} lng The longitude value of the marker
+  * @param {string} popupCont The popup content of the marker should display
   */
-  this.addLayer = (title, data, callObj) => {
+  this.addMarker = (hash, lat, lng, popupCont) => {
+    try {
+      this.map.addMarker(hash, EpochTime(), lat, lng, popupCont);
+    }catch(err) {
+      console.error(err);
+    }
+  };
+
+
+ /**
+  * Method for adding a layer to the api map
+  *
+  * @param {string} title The name of the layer to be added
+  */
+  this.addLayer = (title) => {
     let hash = EpochTime();
     this.layerIds.push(hash);
 
     try {
-      this.map.addLayer(hash, title, data, callObj);
+      this.map.addLayer(hash, title);
+      return hash;
     }catch(err) {
       console.error(err);
     }

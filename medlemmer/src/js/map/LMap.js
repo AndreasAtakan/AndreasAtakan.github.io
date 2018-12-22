@@ -58,6 +58,7 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   // Creates a maker cluster
   this.markercluster = L.markerClusterGroup();
   this.apimap.addLayer(this.markercluster);
+  window.markercluster = this.markercluster;
 
 
 
@@ -80,29 +81,48 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   * Method for adding a layer to the map
   *
   * @param {string} hash The unique hash of the layer to be returned
-  * @param {string} title The name of the layer to be added
-  * @param {geoJSON} data The geoJSON data to generate the layer from
-  * @param {callback} callObj The object containing all callback to be performed on the data
-  * @param {callback} popupCall The callback that generates the popup content
+  * @param {number} lat The latitude value of the marker
+  * @param {number} lng The longitude value of the marker
+  * @param {string} popupCont The popup content of the marker should display
   *
   * @throws An error if the layer type is not defined
   */
-  this.addLayer = (hash, title, data, callObj) => {
+  this.addMarker = (hash, lat, lng, popupCont, ...rest) => {
+    let marker = L.marker({lat: lat, lng: lng}).bindPopup(popupCont);
 
-    let layer = L.geoJSON(data, callObj);
+    marker.options.id = hash;
+    this.layers.push(marker);
+
+    this.markercluster.addLayer(marker);
+
+    for(var id of rest)
+      this.getLayer(id).addLayer(marker);
+  };
+
+
+ /**
+  * Method for adding a layer to the map
+  *
+  * @param {string} hash The unique hash of the layer to be returned
+  * @param {string} title The name of the layer to be added
+  *
+  * @throws An error if the layer type is not defined
+  */
+  this.addLayer = (hash, title) => {
+    let layer = L.featureGroup();
 
     layer.options.id = hash;
-    layer.options.type = "geojson";
+    layer.options.type = "FeatureGroup";
     layer.options.title = title;
 
     this.layers.push(layer);
 
-    this.markercluster.addLayer(layer);
-    //this.apimap.addLayer(layer);
+    //this.markercluster.addLayer(layer);
+    this.apimap.addLayer(layer);
 
     let attribStr = `<span id=\"${hash}\">${title}</span>`;
 
-    this.mapControl.addOverlay(this.markercluster, attribStr);
+    this.mapControl.addOverlay(layer, attribStr);
   };
 
 
@@ -145,14 +165,5 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
     this.apimap.removeLayer(this.layers[x]);
     this.mapControl.removeLayer(this.layers[x]);
     this.layers.splice(x, 1);
-  };
-
- /**
-  * Method for activating a layer
-  *
-  * @param {string} hash The unique hash of the layer to be activated
-  */
-  this.activateLayer = (hash) => {
-    this.apimap.addLayer(this.getLayer(hash));
   };
 }
