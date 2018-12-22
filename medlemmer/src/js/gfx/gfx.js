@@ -31,78 +31,27 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
 
 
 
- /**
-  * Method for adding layer based on data-source type
-  *
-  * @param {string} title The layer title
-  * @param {string} url The url to fetch data from
-  */
-  this.addLayerFromURL = (title, url, popupCont) => {
 
-    $.getJSON(url, (data, status) => {
-      if(status == "success" && data.success) {
 
-        let hash = this.addLayer(title);
 
-        for(var urld of data.result) {
-          L.esri.Geocoding.geocode().address(urld.main_adddress).run((err, results, response) => {
-            let res = results.results[0];
-            this.addMarker(res.latlng.lat, res.latlng.lng,
-              `<h5>${urld.name}</h5>
-               <p>
-                type: ${urld.type} <br>
-                description: ${urld.description} <br>
-                <a href=\"${urld.website}\" target=\"_blank\">Nettsted</a>
-               </p>`,
-            hash);
-          });
-          /*
-          geojson["features"].push({
-            "type": "Feature",
-            "properties": {
-              "id": urld.id,
-              "type": urld.type,
-              "title": urld.title,
-              "name": urld.name,
-              "display_name": urld.display_name,
-              "description": urld.description,
-              "contact_email": urld.contact_email,
-              "contact_mobile": urld.contact_mobile,
-              "contact_name": urld.contact_name,
-              "contact_title": urld.contact_title,
-              "organization_number": urld.organization_number,
-              "organization_type": urld.organization_type,
-              "approval_status": urld.approval_status,
-              "state": urld.state,
-              "phone": urld.phone,
-              "segment": urld.segment,
-              "website": urld.website
-            },
-            "geometry": {
-              "type": "Point",
-              "coordinates": [latlng.lat, latlng.lng]
-            }
-          });
-          */
-        }
-
-      }else
-        alert("Error: could not reach url");
-    });
-  };
 
 
  /**
   * Method for adding a layer to the api map
   *
-  * @param {string} hash The id of the layer to add the marker to
   * @param {number} lat The latitude value of the marker
   * @param {number} lng The longitude value of the marker
   * @param {string} popupCont The popup content of the marker should display
+  * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
   */
-  this.addMarker = (hash, lat, lng, popupCont) => {
+  this.addMarker = (lat, lng, popupCont, ...rest) => {
     try {
-      this.map.addMarker(hash, EpochTime(), lat, lng, popupCont);
+      let _rest = ``;
+      for(let i = 0; i < rest.length; i++)
+        _rest += `rest[${i}]`;
+
+      // HACK: : NOT A GOOD SOLUTION
+      eval(`this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
     }catch(err) {
       console.error(err);
     }

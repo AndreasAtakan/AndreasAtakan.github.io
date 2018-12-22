@@ -19,13 +19,13 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
   let hash = EpochTime();
   this.basemaps = [
-    L.tileLayer("http://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}", {
-                  id: hash,
-                  attribution: "&copy; <a href=\"https://www.google.com/\" target=\"_blank\">Google Maps</a> contributors"
-                }),
     L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                  id: (parseInt(hash) + 1).toString(),
+                  id: hash,
                   attribution: "&copy; <a href=\"http://openstreetmap.org/copyright\" target=\"_blank\">OpenStreetMap</a> contributors"
+                }),
+    L.tileLayer("http://www.google.com/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}", {
+                  id: (parseInt(hash) + 1).toString(),
+                  attribution: "&copy; <a href=\"https://www.google.com/\" target=\"_blank\">Google Maps</a> contributors"
                 })
   ];
 
@@ -44,8 +44,8 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
 
   let underlay = {};
-  underlay["Google Maps &nbsp;&nbsp;"] = this.basemaps[0];
-  underlay["OpenStreetMap &nbsp;&nbsp;"] = this.basemaps[1];
+  underlay["OpenStreetMap &nbsp;&nbsp;"] = this.basemaps[0];
+  underlay["Google Maps &nbsp;&nbsp;"] = this.basemaps[1];
 
   let overlay = {};
 
@@ -80,19 +80,18 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
  /**
   * Method for adding a layer to the map
   *
-  * @param {string} hash The unique hash of the layer to be returned
+  * @param {string} hash The unique hash of the marker to be added
   * @param {number} lat The latitude value of the marker
   * @param {number} lng The longitude value of the marker
   * @param {string} popupCont The popup content of the marker should display
+  * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
   *
   * @throws An error if the layer type is not defined
   */
   this.addMarker = (hash, lat, lng, popupCont, ...rest) => {
-    let marker = L.marker({lat: lat, lng: lng}).bindPopup(popupCont);
+    let marker = L.marker({"lat": lat, "lng": lng}).bindPopup(popupCont);
 
     marker.options.id = hash;
-    this.layers.push(marker);
-
     this.markercluster.addLayer(marker);
 
     for(var id of rest)
@@ -117,7 +116,6 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
     this.layers.push(layer);
 
-    //this.markercluster.addLayer(layer);
     this.apimap.addLayer(layer);
 
     let attribStr = `<span id=\"${hash}\">${title}</span>`;
