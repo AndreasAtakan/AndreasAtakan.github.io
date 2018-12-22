@@ -69,4 +69,36 @@ $.getJSON(url, (data, status) => {
   }else
     alert("Error: could not reach url");
 });
+
+
+
+
+
+// json data formating
+geojson["features"].push({
+  "type": "Feature",
+  "properties": {
+    "id": urld.id,
+    "type": urld.type,
+    "title": urld.title,
+    "name": urld.name,
+    "display_name": urld.display_name,
+    "description": urld.description,
+    "contact_email": urld.contact_email,
+    "contact_mobile": urld.contact_mobile,
+    "contact_name": urld.contact_name,
+    "contact_title": urld.contact_title,
+    "organization_number": urld.organization_number,
+    "organization_type": urld.organization_type,
+    "approval_status": urld.approval_status,
+    "state": urld.state,
+    "phone": urld.phone,
+    "segment": urld.segment,
+    "website": urld.website
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [latlng.lat, latlng.lng]
+  }
+});
 */
