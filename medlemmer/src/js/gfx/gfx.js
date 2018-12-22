@@ -51,7 +51,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
         _rest += `rest[${i}]`;
 
       // HACK: : NOT A GOOD SOLUTION
-      eval(`this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
+      eval(`return this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
     }catch(err) {
       console.error(err);
     }
@@ -68,8 +68,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
     this.layerIds.push(hash);
 
     try {
-      this.map.addLayer(hash, title);
-      return hash;
+      return this.map.addLayer(hash, title);
     }catch(err) {
       console.error(err);
     }

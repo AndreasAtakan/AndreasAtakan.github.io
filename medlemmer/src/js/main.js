@@ -24,14 +24,14 @@ for(var urld of data.result) {
   L.esri.Geocoding.geocode().address(urld.main_adddress).run((err, results, response) => {
     if(results && results.results) {
       let res = results.results[0];
-      maingfx.addMarker(res.latlng.lat, res.latlng.lng,
-        `<h5>${urld.name}</h5>
-         <p>
-          type: ${urld.type} <br>
-          description: ${urld.description} <br>
-          <a href=\"${urld.website}\" target=\"_blank\">Nettsted</a>
-         </p>`,
-      hash);
+      let markerId = maingfx.addMarker(res.latlng.lat, res.latlng.lng,
+                                      `<h5>${urld.name}</h5>
+                                        <p>
+                                          type: ${urld.type} <br>
+                                          description: ${urld.description} <br>
+                                          <a href=\"${urld.website}\" target=\"_blank\">Nettsted</a>
+                                        </p>`,
+                                      hash);
     }
   });
 }

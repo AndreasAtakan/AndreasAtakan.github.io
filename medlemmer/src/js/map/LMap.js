@@ -96,13 +96,15 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
     for(var id of rest)
       this.getLayer(id).addLayer(marker);
+
+    return hash;
   };
 
 
  /**
   * Method for adding a layer to the map
   *
-  * @param {string} hash The unique hash of the layer to be returned
+  * @param {string} hash The unique hash of the layer to be added
   * @param {string} title The name of the layer to be added
   *
   * @throws An error if the layer type is not defined
@@ -117,10 +119,9 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
     this.layers.push(layer);
 
     this.apimap.addLayer(layer);
+    this.mapControl.addOverlay(layer, `<span id=\"${hash}\">${title}</span>`);
 
-    let attribStr = `<span id=\"${hash}\">${title}</span>`;
-
-    this.mapControl.addOverlay(layer, attribStr);
+    return hash;
   };
 
 
