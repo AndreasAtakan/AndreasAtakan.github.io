@@ -15,11 +15,31 @@ window.gfx = maingfx;
 
 
 // Generating layer manually for testing purpose
-
-// Directly accessing the map fields. This i s NOT how it should be done, just for testing perposes
 let url = "http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true",
     title = "Medlemmer";
 
+let data = json,
+    hash = maingfx.addLayer(title);
+
+for(let urld of data.result) {
+  L.esri.Geocoding.geocode().address(urld.main_adddress).run((err, results, response) => {
+    if(results && results.results) {
+      let res = results.results[0];
+      let markerId = maingfx.addMarker(res.latlng.lat, res.latlng.lng,
+                                      `<h5><a href=\"${urld.website}\" target=\"_blank\">${urld.display_name}</a></h5>
+                                        <p><b>type</b>: ${urld.organization_type}</p>
+                                        <p><b>beskrivelse</b>: ${urld.description}</p>
+                                        <p>
+                                          <b>Kontakt:</b> ${urld.contact_name} , ${urld.contact_title} <br>
+                                                     <a href=\"tel:${urld.contact_mobile}\" target=\"_blank\">${urld.contact_mobile}</a> <br>
+                                                     <a href=\"mailto:${urld.contact_email}\" target=\"_blank\">${urld.contact_email}</a>
+                                          </p>`,
+                                        hash);
+    }
+  });
+}
+
+/*
 $.getJSON(url, (data, status) => {
   if(status == "success" && data.success) {
     let hash = maingfx.addLayer(title);
@@ -29,54 +49,22 @@ $.getJSON(url, (data, status) => {
         if(results && results.results) {
           let res = results.results[0];
           let markerId = maingfx.addMarker(res.latlng.lat, res.latlng.lng,
-                                          `<h5>${urld.name}</h5>
+                                          `<h5><a href=\"${urld.website}\" target=\"_blank\">${urld.display_name}</a></h5>
+                                            <p><b>type</b>: ${urld.organization_type}</p>
+                                            <p><b>beskrivelse</b>: ${urld.description}</p>
                                             <p>
-                                              type: ${urld.type} <br>
-                                              description: ${urld.description} <br>
-                                              <a href=\"${urld.website}\" target=\"_blank\">Nettsted</a>
+                                              <b>Kontakt:</b> ${urld.contact_name} , ${urld.contact_title} <br>
+                                                              <a href=\"tel:${urld.contact_mobile}\" target=\"_blank\">${urld.contact_mobile}</a> <br>
+                                                              <a href=\"mailto:${urld.contact_email}\" target=\"_blank\">${urld.contact_email}</a>
                                             </p>`,
                                           hash);
+        }else{
+          console.log(urld.main_adddress);
         }
       });
     }
 
   }else
     alert("Error: could not reach url");
-});
-
-/*
-sources:
-- http://esri.github.io/esri-leaflet/api-reference/tasks/geocode.html#methods
-- https://github.com/Leaflet/Leaflet/issues/2049
-- https://github.com/calvinmetcalf/leaflet-ajax
-
-
-
-// json data formating
-geojson["features"].push({
-  "type": "Feature",
-  "properties": {
-    "id": urld.id,
-    "type": urld.type,
-    "title": urld.title,
-    "name": urld.name,
-    "display_name": urld.display_name,
-    "description": urld.description,
-    "contact_email": urld.contact_email,
-    "contact_mobile": urld.contact_mobile,
-    "contact_name": urld.contact_name,
-    "contact_title": urld.contact_title,
-    "organization_number": urld.organization_number,
-    "organization_type": urld.organization_type,
-    "approval_status": urld.approval_status,
-    "state": urld.state,
-    "phone": urld.phone,
-    "segment": urld.segment,
-    "website": urld.website
-  },
-  "geometry": {
-    "type": "Point",
-    "coordinates": [latlng.lat, latlng.lng]
-  }
 });
 */
