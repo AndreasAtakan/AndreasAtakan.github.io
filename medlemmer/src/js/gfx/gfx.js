@@ -43,6 +43,8 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   * @param {number} lng The longitude value of the marker
   * @param {string} popupCont The popup content of the marker should display
   * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
+  *
+  * @return {string} The id of the new marker
   */
   this.addMarker = (lat, lng, popupCont, ...rest) => {
     try {
@@ -50,8 +52,12 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
       for(let i = 0; i < rest.length; i++)
         _rest += `rest[${i}]`;
 
-      // HACK: : NOT A GOOD SOLUTION
-      eval(`return this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
+      let hash = ``;
+
+      // HACK: NOT A GOOD SOLUTION
+      eval(`hash = this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
+
+      return hash;
     }catch(err) {
       console.error(err);
     }

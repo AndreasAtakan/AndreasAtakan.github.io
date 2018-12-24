@@ -55,13 +55,6 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
 
 
-  // Creates a maker cluster
-  this.markercluster = L.markerClusterGroup();
-  this.apimap.addLayer(this.markercluster);
-  window.markercluster = this.markercluster;
-
-
-
 
 
   // Initializes the geolocation map search from ESRI
@@ -86,13 +79,14 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   * @param {string} popupCont The popup content of the marker should display
   * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
   *
+  * @return {string} The id of the new marker
+  *
   * @throws An error if the layer type is not defined
   */
   this.addMarker = (hash, lat, lng, popupCont, ...rest) => {
     let marker = L.marker({"lat": lat, "lng": lng}).bindPopup(popupCont);
 
     marker.options.id = hash;
-    this.markercluster.addLayer(marker);
 
     for(var id of rest)
       this.getLayer(id).addLayer(marker);
@@ -110,10 +104,10 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   * @throws An error if the layer type is not defined
   */
   this.addLayer = (hash, title) => {
-    let layer = L.featureGroup();
+    let layer = L.markerClusterGroup();
 
     layer.options.id = hash;
-    layer.options.type = "FeatureGroup";
+    layer.options.type = "MarkerCluster";
     layer.options.title = title;
 
     this.layers.push(layer);
