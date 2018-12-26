@@ -57,10 +57,20 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
 
 
-  // Initializes the geolocation map search from ESRI
+  // Initializes the geolocation map search
   this.searchControl = L.esri.Geocoding.geosearch({
     position: "topleft"
   }).addTo(this.apimap);
+  /*
+  L.Control.geocoder({
+    defaultMarkGeocode: false
+  }).on("markgeocode", (e) => {
+    this.apimap.setView({
+      "lat": e.geocode.center.lat,
+      "lng": e.geocode.center.lng
+    }, 12);
+  }).addTo(this.apimap);
+  */
 
 
 
