@@ -78,34 +78,45 @@
 -->
 
 	<!-- Custom JS -->
-  <script src="./src/js/main.js" type="module"></script>
-	<!--script type="text/javascript" src="./src/js/bundle.js"></script-->
+  <!--script src="./src/js/main.js" type="module"></script-->
+	<script type="text/javascript" src="./src/js/bundle.js"></script>
   <script>
-		/*
 		console.info("Running in test mode");
 
 		let maingfx = new gfx($(`div#container`), 0, 5, 64, 13);
 
 
-		// Generating layer manually for testing purpose
-		maingfx.addLayer("Medlemmer", geojson, {
-			onEachFeature: function (feature, layer) {
-				layer.bindPopup(`<h5>${layer.feature.properties.Navn}</h5>
-											 	<p>
-													Innbyggertall: ${layer.feature.properties.Innbyggertall} <br>
-													Område: ${layer.feature.properties["Område"]} <br>
-													<a href=\"${layer.feature.properties.Nettsted}\" target=\"_blank\">Nettsted</a>
-											 	</p>`);
-			}
-		});
 
-		$.getJSON("http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true", (data, status) => {
-			if(status == "success") {
-				console.log(data);
-			}else
-				alert("Error: could not reach url");
+
+
+		// Generating layer manually for testing purpose
+		let url = "http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true",
+		    title = "Medlemmer";
+		let hash = maingfx.addLayer(title);
+
+		$.getJSON(url, (data, status) => {
+		  if(status == "success" && data.success) {
+
+		    for(let urld of data.result) {
+		      if(urld.locationData) {
+		        let latlng = JSON.parse(urld.locationData.replace(/\'/g, '"'));
+		        let markerId = maingfx.addMarker(latlng.latlng.lat, latlng.latlng.lng,
+		                                        `<h5><a href=\"${urld.website}\" target=\"_blank\">${urld.display_name}</a></h5>
+		                                          <img src=\"${urld.image_url}\" alt=\"\" id=\"organization_logo\">
+		                                          <p><b>type</b>: ${urld.organization_type}</p>
+		                                          <p><b>beskrivelse</b>: ${urld.description}</p>
+		                                          <p>
+		                                            <b>Kontakt:</b> ${urld.contact_name} , ${urld.contact_title} <br>
+		                                                            <a href=\"tel:${urld.contact_mobile}\" target=\"_blank\">${urld.contact_mobile}</a> <br>
+		                                                            <a href=\"mailto:${urld.contact_email}\" target=\"_blank\">${urld.contact_email}</a>
+		                                          </p>`,
+		                                        hash);
+		      }
+		    }
+
+		  }else
+		    alert("Error: could not reach url");
 		});
-		*/
   </script>
 </body>
 </html>
