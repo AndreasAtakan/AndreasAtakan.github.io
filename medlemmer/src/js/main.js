@@ -1,7 +1,6 @@
 "use strict";
 
 import {gfx} from "./gfx/gfx.js";
-//import {json} from "./helper/json.js";
 
 console.info("Running in test mode");
 

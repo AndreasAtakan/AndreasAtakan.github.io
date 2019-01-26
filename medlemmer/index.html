@@ -81,26 +81,19 @@
   <!--script src="./src/js/main.js" type="module"></script-->
 	<script type="text/javascript" src="./src/js/bundle.js"></script>
   <script>
-		console.info("Running in test mode");
+		var maingfx = new gfx($(`div#container`), 0, 5, 64, 13);
 
-		let maingfx = new gfx($(`div#container`), 0, 5, 64, 13);
-
-
-
-
-
-		// Generating layer manually for testing purpose
-		let url = "http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true",
+		var url = "http://data.urbalurba.com/api/3/action/organization_list?all_fields=true&include_extras=true",
 		    title = "Medlemmer";
-		let hash = maingfx.addLayer(title);
+		var hash = maingfx.addLayer(title);
 
 		$.getJSON(url, (data, status) => {
 		  if(status == "success" && data.success) {
 
-		    for(let urld of data.result) {
+		    for(var urld of data.result) {
 		      if(urld.locationData) {
-		        let latlng = JSON.parse(urld.locationData.replace(/\'/g, '"'));
-		        let markerId = maingfx.addMarker(latlng.latlng.lat, latlng.latlng.lng,
+		        var latlng = JSON.parse(urld.locationData.replace(/\'/g, "\""));
+		        var markerId = maingfx.addMarker(latlng.latlng.lat, latlng.latlng.lng, "https://image.flaticon.com/icons/svg/33/33622.svg",
 		                                        `<h5><a href=\"${urld.website}\" target=\"_blank\">${urld.display_name}</a></h5>
 		                                          <img src=\"${urld.image_url}\" alt=\"\" id=\"organization_logo\">
 		                                          <p><b>type</b>: ${urld.organization_type}</p>

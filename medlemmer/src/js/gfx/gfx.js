@@ -16,7 +16,7 @@ import {LMap} from "../map/LMap.js";
 export function gfx(container, instanceNum, zoom, initLat, initLng) {
 
   // Initializing container content
-  let cont = `<div class=\"mapcontainer\" id=\"map${instanceNum}\"></div>`;
+  var cont = `<div class=\"mapcontainer\" id=\"map${instanceNum}\"></div>`;
 
   container.html(cont);
 
@@ -41,21 +41,22 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   *
   * @param {number} lat The latitude value of the marker
   * @param {number} lng The longitude value of the marker
+  * @param {string} iconUrl The url to the marker icon
   * @param {string} popupCont The popup content of the marker should display
   * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
   *
   * @return {string} The id of the new marker
   */
-  this.addMarker = (lat, lng, popupCont, ...rest) => {
+  this.addMarker = function(lat, lng, iconUrl, popupCont, ...rest) {
     try {
-      let _rest = ``;
-      for(let i = 0; i < rest.length; i++)
+      var _rest = ``;
+      for(var i = 0; i < rest.length; i++)
         _rest += `rest[${i}]`;
 
-      let hash = ``;
+      var hash = ``;
 
       // HACK: NOT A GOOD SOLUTION
-      eval(`hash = this.map.addMarker(EpochTime(), lat, lng, popupCont, ${_rest});`);
+      eval(`hash = this.map.addMarker(EpochTime(), lat, lng, iconUrl, popupCont, ${_rest});`);
 
       return hash;
     }catch(err) {
@@ -69,8 +70,8 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   *
   * @param {string} title The name of the layer to be added
   */
-  this.addLayer = (title) => {
-    let hash = EpochTime();
+  this.addLayer = function(title) {
+    var hash = EpochTime();
     this.layerIds.push(hash);
 
     try {
@@ -88,7 +89,7 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   *
   * @return {object} The layer with id equal to 'hash'
   */
-  this.getLayer = (hash) => {
+  this.getLayer = function(hash) {
     return this.map.getLayer(hash);
   };
 
@@ -98,9 +99,9 @@ export function gfx(container, instanceNum, zoom, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer to be removed
   */
-  this.removeLayer = (hash) => {
+  this.removeLayer = function(hash) {
     this.map.removeLayer(hash);
-    for(let x = 0; x < this.layerIds.length; x++) {
+    for(var x = 0; x < this.layerIds.length; x++) {
       if(this.layerIds[x] == hash) {
         this.layerIds.splice(x, 1);
         break;

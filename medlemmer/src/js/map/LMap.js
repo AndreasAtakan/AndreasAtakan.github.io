@@ -17,7 +17,7 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   this.initLat = initLat;
   this.initLng = initLng;
 
-  let hash = EpochTime();
+  var hash = EpochTime();
   this.basemaps = [
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                   id: hash,
@@ -43,11 +43,11 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
 
 
 
-  let underlay = {};
+  var underlay = {};
   underlay["OpenStreetMap &nbsp;&nbsp;"] = this.basemaps[0];
   underlay["Google Maps &nbsp;&nbsp;"] = this.basemaps[1];
 
-  let overlay = {};
+  var overlay = {};
 
   this.mapControl = L.control.layers(underlay, overlay, {
     position: "bottomright"
@@ -86,6 +86,7 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   * @param {string} hash The unique hash of the marker to be added
   * @param {number} lat The latitude value of the marker
   * @param {number} lng The longitude value of the marker
+  * @param {string} iconUrl The url to the marker icon
   * @param {string} popupCont The popup content of the marker should display
   * @param {Array<?>} rest A, possibly empty, list of id's. These are the id's of the layers that the maper is to be added to
   *
@@ -93,8 +94,12 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   *
   * @throws An error if the layer type is not defined
   */
-  this.addMarker = (hash, lat, lng, popupCont, ...rest) => {
-    let marker = L.marker({"lat": lat, "lng": lng}).bindPopup(popupCont);
+  this.addMarker = function(hash, lat, lng, iconUrl, popupCont, ...rest) {
+    var newIcon = L.icon({
+      iconUrl: iconUrl,
+      iconSize: [38, 95]
+    });
+    var marker = L.marker([lat, lng], {icon: newIcon}).bindPopup(popupCont);
 
     marker.options.id = hash;
 
@@ -113,8 +118,8 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   *
   * @throws An error if the layer type is not defined
   */
-  this.addLayer = (hash, title) => {
-    let layer = L.markerClusterGroup();
+  this.addLayer = function(hash, title) {
+    var layer = L.markerClusterGroup();
 
     layer.options.id = hash;
     layer.options.type = "MarkerCluster";
@@ -136,8 +141,8 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   *
   * @return {object} The layer with id equal to 'hash'
   */
-  this.getLayer = (hash) => {
-    for(let x = 0; x < this.layers.length; x++)
+  this.getLayer = function(hash) {
+    for(var x = 0; x < this.layers.length; x++)
       if(this.layers[x].options.id == hash)
         return this.layers[x];
   };
@@ -151,8 +156,8 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   *
   * @return {number} The position of the layer
   */
-  this.getLayerPos = (hash) => {
-    for(let x = 0; x < this.layers.length; x++)
+  this.getLayerPos = function(hash) {
+    for(var x = 0; x < this.layers.length; x++)
       if(this.layers[x].options.id == hash)
         return x;
   };
@@ -162,8 +167,8 @@ export function LMap(instanceNum, zoom, initLat, initLng) {
   *
   * @param {string} hash The unique hash of the layer to be removed
   */
-  this.removeLayer = (hash) => {
-    let x = this.getLayerPos(hash);
+  this.removeLayer = function(hash) {
+    var x = this.getLayerPos(hash);
 
     this.apimap.removeLayer(this.layers[x]);
     this.mapControl.removeLayer(this.layers[x]);

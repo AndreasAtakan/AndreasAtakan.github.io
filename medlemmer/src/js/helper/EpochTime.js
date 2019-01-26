@@ -1,5 +1,5 @@
 "use strict";
 
 export function EpochTime() {
-  return (new Date).getTime().toString();
+  return (new Date()).getTime().toString();
 }
